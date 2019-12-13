@@ -1,10 +1,18 @@
 #!/bin/bash
-COMMIT=$1
 
-BODY=`git show -s --format=%b $COMMIT`
-ORIG=`echo $BODY | sed 's/.*from commit \(.*\))/\1/g'`
+if [ "$#" -eq  "2" ] ; then
+  COMMIT="$2"
+  ORIG="$1"
+elif [ "$#" -eq  "1" ] ; then
+  COMMIT="HEAD"
+  ORIG="$1"
+else
+  COMMIT="HEAD"
+  BODY=`git show -s --format=%b $COMMIT`
+  ORIG=`echo $BODY | sed 's/.*from commit \(.*\))/\1/g'`
+fi
 
-echo "Comparing $1 to $ORIG"
-git diff $1~1 $1 > after.txt
+echo "Comparing $COMMIT to $ORIG"
+git diff $COMMIT~1 $COMMIT > after.txt
 git diff $ORIG~1 $ORIG > before.txt
 kdiff3 before.txt after.txt
